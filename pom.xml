@@ -75,6 +75,7 @@
 
     <modules>
         <module>media</module>
+        <module>springboot</module>
     </modules>
 
 </project>
