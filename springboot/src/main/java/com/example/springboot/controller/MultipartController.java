@@ -30,12 +30,18 @@ public class MultipartController {
 
     ThreadPoolTaskExecutor executor;
 
+    /**
+     * 不会报错,因为Servlet流程没走完
+     */
     @PostMapping("upload")
     public void upload(final MultipartFile file) throws IOException {
         FileWriter writer = new FileWriter("file/" + file.getOriginalFilename());
         writer.writeFromStream(file.getInputStream());
     }
 
+    /**
+     * 不会报错,因为file写入文件的时候，Servlet还没回收file
+     */
     @PostMapping("upload1")
     public void upload1(final MultipartFile file) {
         executor.submit(new Runnable() {
@@ -50,6 +56,9 @@ public class MultipartController {
         });
     }
 
+    /**
+     * 会报错,因为file的流随着Servlet回收而回收
+     */
     @PostMapping("upload2")
     public void upload2(final MultipartFile file) {
         executor.submit(new Runnable() {
@@ -65,6 +74,9 @@ public class MultipartController {
         });
     }
 
+    /**
+     * 不会报错,因为file.getInputStream() 是新创了个流对象,不会随着Servlet回收而回收
+     */
     @PostMapping("upload3")
     public void upload3(final MultipartFile file) throws IOException {
         final InputStream inputStream = file.getInputStream();
